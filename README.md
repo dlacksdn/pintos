@@ -1,27 +1,27 @@
+```mermaid
 flowchart TD
-    A[timer_init()] -->|configures PIT &\nregisters handler| B[timer_interrupt()]
-    B -->|on each tick| C[ticks++]
-    C -->|calls| D[thread_tick()]
+  A[timer_init()] -->|PIT 설정 및 핸들러 등록| B[timer_interrupt()]
+  B -->|매 틱마다| C[ticks++]
+  C -->|thread_tick() 호출| D[thread_tick()]
 
-    F[timer_calibrate()] --> G[too_many_loops()]
-    G -->|if too few loops| H[loops <<= 1]
-    G -->|else|\nrefine bits using| H
-    G -->|calls| I[busy_wait()]
+  F[timer_calibrate()] --> G[too_many_loops()]
+  G -->|루프가 너무 짧으면| H[loops <<= 1]
+  G -->|아니면 비트 정밀도 보정| H
+  G -->|busy_wait() 호출| I[busy_wait()]
 
-    J[timer_ticks()] -->|disable intr|\nread ticks| C
-    J -->|return| K[t]
+  J[timer_ticks()] -->|인터럽트 비활성화 후 읽기| C
+  J -->|값 반환| K[t 반환]
 
-    L[timer_elapsed(then)] -->|calls| J
-    L -->|compute| M[t - then]
+  L[timer_elapsed(then)] -->|timer_ticks() 호출| J
+  L -->|경과 계산| M[t–then]
 
-    N[timer_sleep(ticks)] -->|start = timer_ticks()| J
-    N -->|while elapsed < ticks| L
-    N -->|inside loop| O[thread_yield()]
+  N[timer_sleep(ticks)] -->|start = timer_ticks()| J
+  N -->|elapsed < ticks 동안| L
+  N -->|루프 안에서| O[thread_yield()]
 
-    %% style separators
-    style A fill:#f9f,stroke:#333,stroke-width:1px
-    style F fill:#f9f,stroke:#333,stroke-width:1px
-    style J fill:#f9f,stroke:#333,stroke-width:1px
-    style L fill:#f9f,stroke:#333,stroke-width:1px
-    style N fill:#f9f,stroke:#333,stroke-width:1px
-    style B fill:#ff9,stroke:#333,stroke-width:1px
+  style A fill:#f9f,stroke:#333,stroke-width:1px
+  style F fill:#f9f,stroke:#333,stroke-width:1px
+  style J fill:#f9f,stroke:#333,stroke-width:1px
+  style L fill:#f9f,stroke:#333,stroke-width:1px
+  style N fill:#f9f,stroke:#333,stroke-width:1px
+  style B fill:#ff9,stroke:#333,stroke-width:1px
