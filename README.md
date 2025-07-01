@@ -1,3 +1,4 @@
+```mermaid
 flowchart TD
   A["timer_init()"] -->|"PIT 설정 및 핸들러 등록"| B["timer_interrupt()"]
   B -->|"매 틱마다"| C["ticks++"]
