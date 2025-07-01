@@ -9,7 +9,7 @@ flowchart TD
   G -->|"아니면 비트 정밀도 보정"| H
   G -->|"busy_wait() 호출"| I["busy_wait()"]
 
-  J -->|"값 반환"| K["t 반환"]
+  J["timer_ticks()"] -->|"값 반환"| K["t 반환"] 
 
   L["timer_elapsed(then)"] -->|"timer_ticks() 호출"| J
   L -->|"경과 계산"| M["t – then"]
