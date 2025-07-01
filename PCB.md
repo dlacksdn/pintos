@@ -1,3 +1,4 @@
+```mermaid
 flowchart TD
   %% Initialization
   A[thread_init()] -->|calls| B[init_thread(t, \"main\", PRI_DEFAULT)]
