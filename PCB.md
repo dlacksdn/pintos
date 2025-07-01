@@ -7,14 +7,14 @@ flowchart TD
 
   %% Start scheduling
   A -->|from main| D["thread_start()"]
-  D -->|create idle| E["thread_create(\"idle\", PRI_MIN, idle, aux)"]
+  D -->|create idle| E["thread_create('idle', PRI_MIN, idle, aux)"]
   E -->|calls| F["init_thread()"]
   F --> G["allocate_tid()"]
   G --> H["alloc_frame()"]
   H --> I["alloc_frame()"]
   I --> J["alloc_frame()"]
   J --> K["thread_unblock()"]
-  K --> L["ready_list ← t"]
+  K --> L["push to ready_list"]
   D --> M["intr_enable()"]
   D --> N["sema_down(&idle_started)"]
 
@@ -24,6 +24,37 @@ flowchart TD
   Q -->|yes| R["intr_yield_on_return()"]
   R --> S["thread_yield()"]
   Q -->|no| T["return"]
+
+  %% Blocking & Unblocking
+  U["thread_block()"] --> V["status ← BLOCKED"]
+  V --> W["schedule()"]
+  X["thread_unblock(t)"] --> Y["status ← READY"]
+  Y --> L
+
+  %% Yield
+  S --> AA["intr_disable()"]
+  AA --> AB{"not idle?"}
+  AB -->|yes| AC["add to ready_list"]
+  AC --> AD["status ← READY"]
+  AD --> W
+  AB -->|no| W
+
+  %% Scheduler core
+  W --> AE["next_thread_to_run()"]
+  AE --> AF["switch_threads(cur, next)"]
+  AF --> AG["thread_schedule_tail()"]
+  AG --> AH["cleanup & reset ticks"]
+
+  %% Helpers
+  AI["thread_current()"] --> AJ["running_thread()"]
+  AJ --> AK["is_thread()"]
+  AK --> AI
+
+  %% Thread exit
+  AL["thread_exit()"] --> AM["intr_disable()"]
+  AM --> AN["list_remove(&allelem)"]
+  AN --> AO["status ← DYING"]
+  AO -->
 
   %% Blocking & Unblocking
   U["thread_block()"] --> V["status ← BLOCKED"]
